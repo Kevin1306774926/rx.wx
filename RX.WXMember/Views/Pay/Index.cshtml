@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "微信充值支付页面";
+}
+
+<div id="login">
+    <!--登录面板-->
+    <form method="post">
+        <div id="login_penel">
+            <!--账户和密码组-->
+            <div class="group">
+                <label>充值:</label>
+                <input name="userCode" placeholder="单位：元" />
+            </div>
+
+            <!--登录按钮	-->
+            <div>
+                <button type="submit">立即支付</button>
+            </div>
+            <label class="errmsg">@ViewBag.Message</label>
+        </div>
+    </form>
+
+</div>
+
+@section scripts{
+<script type="text/javascript">
+
+               //调用微信JS api 支付
+               function jsApiCall()
+               {
+                   WeixinJSBridge.invoke(
+                   'getBrandWCPayRequest',
+                   @ViewBag.wxJsApiParam,//josn串
+                    function (res)
+                    {
+                        WeixinJSBridge.log(res.err_msg);
+                        alert(res.err_code + res.err_desc + res.err_msg);
+                     }
+                    );
+               }
+
+               function callpay()
+               {
+                   if (typeof WeixinJSBridge == "undefined")
+                   {
+                       if (document.addEventListener)
+                       {
+                           document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+                       }
+                       else if (document.attachEvent)
+                       {
+                           document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                           document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+                       }
+                   }
+                   else
+                   {
+                       jsApiCall();
+                   }
+               }
+
+</script>
+}
