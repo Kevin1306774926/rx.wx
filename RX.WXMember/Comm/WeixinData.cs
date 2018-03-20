@@ -52,13 +52,14 @@ namespace RX.WXMember.Comm
         /// <summary>
         /// 消息id，64位整型
         /// </summary>
-        public const string MSG_ID = "MsgId";
+        public const string MSG_ID = "MsgId";        
 
         public static string CallbackUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["CallbackUrl"].ToString();
         public static string Token= System.Web.Configuration.WebConfigurationManager.AppSettings["Token"].ToString();
         public static string AppId= System.Web.Configuration.WebConfigurationManager.AppSettings["AppId"].ToString();
         public static string AppSecret= System.Web.Configuration.WebConfigurationManager.AppSettings["AppSecret"].ToString();
         public static string EncodingAESkey= System.Web.Configuration.WebConfigurationManager.AppSettings["EncodingAESkey"].ToString();
+        public static string MchId = System.Web.Configuration.WebConfigurationManager.AppSettings["MchId"].ToString();
         /// <summary>
         /// 得到当前时间（整型）（考虑时区）
         /// </summary>

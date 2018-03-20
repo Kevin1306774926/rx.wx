@@ -10,45 +10,30 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
-    <tr>
+    <tr>       
         <th>
-            @Html.DisplayNameFor(model => model.Code)
+            昵称
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.NickName)
+            性别
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Sex)
+            城市
+        </th>     
+        <th>
+            创建时间
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.City)
+            最后时间
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Country)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Province)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreateTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsStop)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsManager)
+            管理员
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Code)
-        </td>
         <td>
             @Html.DisplayFor(modelItem => item.NickName)
         </td>
@@ -59,19 +44,10 @@
             @Html.DisplayFor(modelItem => item.City)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Country)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Province)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.CreateTime)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.LastTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsStop)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsManager)
