@@ -9,7 +9,7 @@
 // The following connection settings were used to generate this file:
 //     Configuration file:     "RX.WXMember.Models\App.config"
 //     Connection String Name: "MyDbContext"
-//     Connection String:      "Data Source=.;Initial Catalog=wx_member;Uid=sa;Pwd=Barcode2017;MultipleActiveResultSets=True;Application Name=RocApp"
+//     Connection String:      "Data Source=.;Initial Catalog=wx_member;Uid=sa;Pwd=Game2018;MultipleActiveResultSets=True;Application Name=rx.wxmember"
 // ------------------------------------------------------------------------------------------------
 // Database Edition       : Express Edition (64-bit)
 // Database Engine Edition: Express
@@ -38,6 +38,8 @@ namespace RX.WXMember.Models
     public interface IMyDbContext : System.IDisposable
     {
         System.Data.Entity.DbSet<Customer> Customers { get; set; } // Customer
+        System.Data.Entity.DbSet<Order> Orders { get; set; } // Orders
+        System.Data.Entity.DbSet<ReaderSn> ReaderSns { get; set; } // ReaderSN
         System.Data.Entity.DbSet<RegRecord> RegRecords { get; set; } // RegRecord
         System.Data.Entity.DbSet<ShiftRecord> ShiftRecords { get; set; } // ShiftRecord
 
@@ -55,6 +57,10 @@ namespace RX.WXMember.Models
         string ToString();
 
         // Stored Procedures
+        System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg);
+        System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg, out int procResult);
+        // CreateSnAsync cannot be created due to having out parameters, or is relying on the procedure result (System.Collections.Generic.List<CreateSnReturnModel>)
+
         int GetMaxId(string groundCode);
         // GetMaxIdAsync cannot be created due to having out parameters, or is relying on the procedure result (int)
 
@@ -68,6 +74,8 @@ namespace RX.WXMember.Models
     public partial class MyDbContext : System.Data.Entity.DbContext, IMyDbContext
     {
         public System.Data.Entity.DbSet<Customer> Customers { get; set; } // Customer
+        public System.Data.Entity.DbSet<Order> Orders { get; set; } // Orders
+        public System.Data.Entity.DbSet<ReaderSn> ReaderSns { get; set; } // ReaderSN
         public System.Data.Entity.DbSet<RegRecord> RegRecords { get; set; } // RegRecord
         public System.Data.Entity.DbSet<ShiftRecord> ShiftRecords { get; set; } // ShiftRecord
 
@@ -125,6 +133,8 @@ namespace RX.WXMember.Models
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Configurations.Add(new CustomerConfiguration());
+            modelBuilder.Configurations.Add(new OrderConfiguration());
+            modelBuilder.Configurations.Add(new ReaderSnConfiguration());
             modelBuilder.Configurations.Add(new RegRecordConfiguration());
             modelBuilder.Configurations.Add(new ShiftRecordConfiguration());
 
@@ -134,6 +144,8 @@ namespace RX.WXMember.Models
         public static System.Data.Entity.DbModelBuilder CreateModel(System.Data.Entity.DbModelBuilder modelBuilder, string schema)
         {
             modelBuilder.Configurations.Add(new CustomerConfiguration(schema));
+            modelBuilder.Configurations.Add(new OrderConfiguration(schema));
+            modelBuilder.Configurations.Add(new ReaderSnConfiguration(schema));
             modelBuilder.Configurations.Add(new RegRecordConfiguration(schema));
             modelBuilder.Configurations.Add(new ShiftRecordConfiguration(schema));
             return modelBuilder;
@@ -143,6 +155,30 @@ namespace RX.WXMember.Models
         partial void OnModelCreatingPartial(System.Data.Entity.DbModelBuilder modelBuilder);
 
         // Stored Procedures
+        public System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg)
+        {
+            int procResult;
+            return CreateSn(cpu, out msg, out procResult);
+        }
+
+        public System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg, out int procResult)
+        {
+            var cpuParam = new System.Data.SqlClient.SqlParameter { ParameterName = "@cpu", SqlDbType = System.Data.SqlDbType.NVarChar, Direction = System.Data.ParameterDirection.Input, Value = cpu, Size = 50 };
+            if (cpuParam.Value == null)
+                cpuParam.Value = System.DBNull.Value;
+
+            var msgParam = new System.Data.SqlClient.SqlParameter { ParameterName = "@msg", SqlDbType = System.Data.SqlDbType.NVarChar, Direction = System.Data.ParameterDirection.Output, Size = 50 };
+            var procResultParam = new System.Data.SqlClient.SqlParameter { ParameterName = "@procResult", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
+            var procResultData = Database.SqlQuery<CreateSnReturnModel>("EXEC @procResult = [dbo].[CreateSN] @cpu, @msg OUTPUT", cpuParam, msgParam, procResultParam).ToList();
+            if (IsSqlParameterNull(msgParam))
+                msg = default(string);
+            else
+                msg = (string) msgParam.Value;
+
+            procResult = (int) procResultParam.Value;
+            return procResultData;
+        }
+
         public int GetMaxId(string groundCode)
         {
             var groundCodeParam = new System.Data.SqlClient.SqlParameter { ParameterName = "@groundCode", SqlDbType = System.Data.SqlDbType.NVarChar, Direction = System.Data.ParameterDirection.Input, Value = groundCode, Size = 20 };
@@ -165,12 +201,16 @@ namespace RX.WXMember.Models
     public partial class FakeMyDbContext : IMyDbContext
     {
         public System.Data.Entity.DbSet<Customer> Customers { get; set; }
+        public System.Data.Entity.DbSet<Order> Orders { get; set; }
+        public System.Data.Entity.DbSet<ReaderSn> ReaderSns { get; set; }
         public System.Data.Entity.DbSet<RegRecord> RegRecords { get; set; }
         public System.Data.Entity.DbSet<ShiftRecord> ShiftRecords { get; set; }
 
         public FakeMyDbContext()
         {
             Customers = new FakeDbSet<Customer>("Id");
+            Orders = new FakeDbSet<Order>("Id");
+            ReaderSns = new FakeDbSet<ReaderSn>("Id");
             RegRecords = new FakeDbSet<RegRecord>("Id");
             ShiftRecords = new FakeDbSet<ShiftRecord>("Id");
 
@@ -240,6 +280,20 @@ namespace RX.WXMember.Models
 
 
         // Stored Procedures
+        public System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg)
+        {
+            int procResult;
+            return CreateSn(cpu, out msg, out procResult);
+        }
+
+        public System.Collections.Generic.List<CreateSnReturnModel> CreateSn(string cpu, out string msg, out int procResult)
+        {
+            msg = default(string);
+
+            procResult = 0;
+            return new System.Collections.Generic.List<CreateSnReturnModel>();
+        }
+
         public int GetMaxId(string groundCode)
         {
 
@@ -540,6 +594,56 @@ namespace RX.WXMember.Models
         partial void InitializePartial();
     }
 
+    // Orders
+    [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
+    public partial class Order
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public string GroundCode { get; set; } // GroundCode (length: 10)
+        public string GameCode { get; set; } // GameCode (length: 10)
+        public string ReaderCode { get; set; } // ReaderCode (length: 10)
+        public string DeviceSn { get; set; } // DeviceSN (length: 10)
+        public int Amt { get; set; } // Amt
+        public string WeiXinCode { get; set; } // WeiXinCode (length: 50)
+        public string Openid { get; set; } // Openid (length: 50)
+        public string Unionid { get; set; } // Unionid (length: 50)
+        public System.DateTime CreateTime { get; set; } // CreateTime
+        public int State { get; set; } // State
+        public string BillNo { get; set; } // BillNo (length: 50)
+        public string WxBillNo { get; set; } // WXBillNo (length: 50)
+
+        public Order()
+        {
+            Amt = 0;
+            CreateTime = System.DateTime.Now;
+            State = 0;
+            InitializePartial();
+        }
+
+        partial void InitializePartial();
+    }
+
+    // ReaderSN
+    [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
+    public partial class ReaderSn
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public string Cpu { get; set; } // CPU (length: 200)
+        public int Count { get; set; } // Count
+        public System.DateTime OpTime { get; set; } // OpTime
+        public System.DateTime ModifyTime { get; set; } // ModifyTime
+
+        public ReaderSn()
+        {
+            Count = 1;
+            OpTime = System.DateTime.Now;
+            ModifyTime = System.DateTime.Now;
+            InitializePartial();
+        }
+
+        partial void InitializePartial();
+    }
+
     // RegRecord
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
     public partial class RegRecord
@@ -712,6 +816,62 @@ namespace RX.WXMember.Models
         partial void InitializePartial();
     }
 
+    // Orders
+    [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
+    public partial class OrderConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<Order>
+    {
+        public OrderConfiguration()
+            : this("dbo")
+        {
+        }
+
+        public OrderConfiguration(string schema)
+        {
+            ToTable("Orders", schema);
+            HasKey(x => x.Id);
+
+            Property(x => x.Id).HasColumnName(@"Id").HasColumnType("int").IsRequired().HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+            Property(x => x.GroundCode).HasColumnName(@"GroundCode").HasColumnType("nvarchar").IsRequired().HasMaxLength(10);
+            Property(x => x.GameCode).HasColumnName(@"GameCode").HasColumnType("nchar").IsRequired().IsFixedLength().HasMaxLength(10);
+            Property(x => x.ReaderCode).HasColumnName(@"ReaderCode").HasColumnType("nvarchar").IsRequired().HasMaxLength(10);
+            Property(x => x.DeviceSn).HasColumnName(@"DeviceSN").HasColumnType("nvarchar").IsOptional().HasMaxLength(10);
+            Property(x => x.Amt).HasColumnName(@"Amt").HasColumnType("int").IsRequired();
+            Property(x => x.WeiXinCode).HasColumnName(@"WeiXinCode").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
+            Property(x => x.Openid).HasColumnName(@"Openid").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
+            Property(x => x.Unionid).HasColumnName(@"Unionid").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
+            Property(x => x.CreateTime).HasColumnName(@"CreateTime").HasColumnType("datetime").IsRequired();
+            Property(x => x.State).HasColumnName(@"State").HasColumnType("int").IsRequired();
+            Property(x => x.BillNo).HasColumnName(@"BillNo").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
+            Property(x => x.WxBillNo).HasColumnName(@"WXBillNo").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
+            InitializePartial();
+        }
+        partial void InitializePartial();
+    }
+
+    // ReaderSN
+    [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
+    public partial class ReaderSnConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<ReaderSn>
+    {
+        public ReaderSnConfiguration()
+            : this("dbo")
+        {
+        }
+
+        public ReaderSnConfiguration(string schema)
+        {
+            ToTable("ReaderSN", schema);
+            HasKey(x => x.Id);
+
+            Property(x => x.Id).HasColumnName(@"Id").HasColumnType("int").IsRequired().HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+            Property(x => x.Cpu).HasColumnName(@"CPU").HasColumnType("nvarchar").IsRequired().HasMaxLength(200);
+            Property(x => x.Count).HasColumnName(@"Count").HasColumnType("int").IsRequired();
+            Property(x => x.OpTime).HasColumnName(@"OpTime").HasColumnType("datetime").IsRequired();
+            Property(x => x.ModifyTime).HasColumnName(@"ModifyTime").HasColumnType("datetime").IsRequired();
+            InitializePartial();
+        }
+        partial void InitializePartial();
+    }
+
     // RegRecord
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
     public partial class RegRecordConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<RegRecord>
@@ -778,6 +938,12 @@ namespace RX.WXMember.Models
     #endregion
 
     #region Stored procedure return models
+
+    [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.32.0.0")]
+    public partial class CreateSnReturnModel
+    {
+        public System.String Column1 { get; set; }
+    }
 
     #endregion
 

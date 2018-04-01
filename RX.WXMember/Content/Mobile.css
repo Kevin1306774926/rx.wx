@@ -135,8 +135,20 @@ td {
 	border: 1px solid #CC865E;
 }
 /*微信按钮*/
-#login_penel a{
-	display: block;
+    #login_penel a {
+
+        display: inline-block;
+        width: 78px;
+        height: 56px;
+        background-color: #466BAF;
+        color: #EEEEEE;
+        text-align: center;
+        line-height: 50px;
+        margin: 3px;
+    }
+
+#weixin_a {
+    display: block;
 	background-color: #466baf;
 	width: 262px;
 	height: 38px;
@@ -145,19 +157,83 @@ td {
 	color: white;
 }
 
+    #charge button {
+        height: 30px;
+        color: white;
+        font-size: 18px;
+        border: 0px;
+        padding: 0px;
+        cursor: pointer;
+        //按钮鼠标的样式
+    }
 
+#charge_penel {
+    background-color: white;
+    width: 302px;
+    text-align: center;
+    margin: 0px auto;
+    padding-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
 
+    #charge_penel .group {
+        text-align: left;
+        width: 262px;
+        margin: 0px auto 20px;
+    }
+
+        #charge_penel .group label {
+            line-height: 30px;
+            font-size: 18px;
+        }
+
+        #charge_penel .group input {
+            display: block;
+            width: 250px;
+            height: 30px;
+            border: 1px solid #DDDDDD;
+            padding: 0px 0px 0px 10px;
+            font-size: 16px;
+        }
+
+            #charge_penel .group input:focus {
+                border-left: 1px solid #cc865e;
+            }
+
+    #charge_penel button {
+        background-color: #CC865E;
+        width: 262px;
+        height: 38px;
+    }
+
+        #charge_penel button:hover {
+            background-color: white;
+            color: #CC865E;
+            border: 1px solid #CC865E;
+        }
+
+#charge {
+    display: inline-block;
+    width: 78px;
+    height: 56px;
+    background-color: #466BAF;
+    color: #EEEEEE;
+    text-align: center;
+    line-height: 50px;
+    margin: 3px;
+}
 /*管理员首页*/
-#header{
-	//max-width: 640px;
-	width: 100%;
-	height: 45px;
-	background-color: #333333;
-	font-size: 18px;	
-	margin: 0 auto;
-	position: fixed;
-	top: 0;
-	z-index: 999;
+#header {
+    //max-width: 640px;
+    width: 100%;
+    height: 45px;
+    background-color: #333333;
+    font-size: 18px;
+    margin: 0 auto;
+    position: fixed;
+    top: 0;
+    z-index: 999;
 }
 #header .link{
 	width: 100%;
@@ -168,7 +244,7 @@ td {
 	color: #EEEEEE;
 }
 #header li{
-	width: 25%;
+	width: 20%;
 	float: left;
 	text-align: center;
 	line-height: 45px;

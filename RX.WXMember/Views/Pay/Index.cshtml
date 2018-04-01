@@ -1,15 +1,22 @@
 ﻿
 @{
-    ViewBag.Title = "微信充值支付页面";
+    ViewBag.Title = "微信充值";
 }
 
 <div id="login">
-    <!--登录面板-->
     <form method="post">
         <div id="login_penel">
             <div class="group">
                 <label>充值:</label>
                 <input id="ChargeVal" name="ChargeVal" placeholder="单位：元" />
+            </div>
+            <div class="group">
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(1)">1元</a>
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(2)">2元</a>
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(5)">5元</a>
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(10)">10元</a>
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(20)">20元</a>
+                    <a id="charge" href="javascript:void(0);" onclick="Charge(50)">50元</a>
             </div>
             <div>
                 <button type="button" onclick="fCharge()">立即支付</button>

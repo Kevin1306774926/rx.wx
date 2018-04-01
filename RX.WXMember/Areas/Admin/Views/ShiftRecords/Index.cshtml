@@ -13,43 +13,28 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.GroundCode)
+            场地编号
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ShiftId)
+            班次
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CheckIn)
+            充值金额
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CheckOut)
+            兑币金额
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SaleQty)
+            金额
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RefundQty)
+            赠币数
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OfferQty)
+            时间
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalQty)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SaleAmt)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RefundAmt)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SumAmt)
-        </th>       
-        <th>
-            @Html.DisplayNameFor(model => model.OpTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UserName)
+            操作员
         </th>
         <th></th>
     </tr>
@@ -63,24 +48,6 @@
             @Html.DisplayFor(modelItem => item.ShiftId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CheckIn)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CheckOut)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SaleQty)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RefundQty)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OfferQty)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TotalQty)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.SaleAmt)
         </td>
         <td>
@@ -88,7 +55,10 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.SumAmt)
-        </td>       
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OfferQty)
+        </td>
         <td>
             @Html.DisplayFor(modelItem => item.OpTime)
         </td>
@@ -96,9 +66,7 @@
             @Html.DisplayFor(modelItem => item.UserName)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Details", "Details", new { id = item.Id })
         </td>
     </tr>
 }
