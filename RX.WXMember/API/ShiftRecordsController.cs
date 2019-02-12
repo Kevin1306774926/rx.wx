@@ -27,8 +27,33 @@ namespace RX.WXMember
         // POST api/<controller>
         public void Post([FromBody]IEnumerable<ShiftRecord> value)
         {
-            db.ShiftRecords.AddRange(value);
-            db.SaveChanges();
+            if(value!=null)
+            {
+                foreach(ShiftRecord item in value)
+                {
+                    var mode = db.ShiftRecords.Where(t => t.ShiftId == item.ShiftId && t.GroundCode == item.GroundCode).FirstOrDefault();
+                    if (mode != null)
+                    {
+                        mode.CheckOut = item.CheckOut;
+                        mode.OfferQty = item.OfferQty;
+                        mode.RefundAmt = item.RefundAmt;
+                        mode.RefundQty = item.RefundQty;
+                        mode.SaleAmt = item.SaleAmt;
+                        mode.SaleQty = item.SaleQty;
+                        mode.SumAmt = item.SumAmt;
+                        mode.TotalQty = item.TotalQty;
+                        mode.TotalRestQty = item.TotalRestQty;
+                        mode.TotalRestQtyAfter = item.TotalRestQtyAfter;
+                        mode.TotalRestQtyBefor = item.TotalRestQtyBefor;
+                        mode.Ts = item.Ts;                         
+                    }
+                    else
+                    {
+                        db.ShiftRecords.Add(item);
+                    }
+                }
+                db.SaveChanges();
+            }                        
         }
 
         // PUT api/<controller>/5

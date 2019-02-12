@@ -603,7 +603,7 @@ namespace RX.WXMember.Models
         public string GameCode { get; set; } // GameCode (length: 10)
         public string ReaderCode { get; set; } // ReaderCode (length: 10)
         public string DeviceSn { get; set; } // DeviceSN (length: 10)
-        public int Amt { get; set; } // Amt
+        public decimal Amt { get; set; } // Amt
         public string WeiXinCode { get; set; } // WeiXinCode (length: 50)
         public string Openid { get; set; } // Openid (length: 50)
         public string Unionid { get; set; } // Unionid (length: 50)
@@ -614,7 +614,7 @@ namespace RX.WXMember.Models
 
         public Order()
         {
-            Amt = 0;
+            Amt = 0m;
             CreateTime = System.DateTime.Now;
             State = 0;
             InitializePartial();
@@ -835,7 +835,7 @@ namespace RX.WXMember.Models
             Property(x => x.GameCode).HasColumnName(@"GameCode").HasColumnType("nchar").IsRequired().IsFixedLength().HasMaxLength(10);
             Property(x => x.ReaderCode).HasColumnName(@"ReaderCode").HasColumnType("nvarchar").IsRequired().HasMaxLength(10);
             Property(x => x.DeviceSn).HasColumnName(@"DeviceSN").HasColumnType("nvarchar").IsOptional().HasMaxLength(10);
-            Property(x => x.Amt).HasColumnName(@"Amt").HasColumnType("int").IsRequired();
+            Property(x => x.Amt).HasColumnName(@"Amt").HasColumnType("decimal").IsRequired().HasPrecision(18,2);
             Property(x => x.WeiXinCode).HasColumnName(@"WeiXinCode").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
             Property(x => x.Openid).HasColumnName(@"Openid").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);
             Property(x => x.Unionid).HasColumnName(@"Unionid").HasColumnType("nvarchar").IsOptional().HasMaxLength(50);

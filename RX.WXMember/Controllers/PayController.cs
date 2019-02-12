@@ -8,9 +8,11 @@ using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using Senparc.Weixin.MP.TenPayLibV3;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -23,7 +25,7 @@ namespace RX.WXMember.Controllers
         private MyDbContext db = new MyDbContext();
         // GET: Pay
         public ActionResult Index(string id)
-        {
+        {            
             // 调用地址 http://w.roccode.cn/pay/RX20180100110073
             if (!string.IsNullOrEmpty(id))
             {
@@ -70,6 +72,7 @@ namespace RX.WXMember.Controllers
             string strTotal_fee = Request.Form["totalfee"];
             if (int.TryParse(strTotal_fee, out totalfee))
             {
+                totalfee = totalfee * 100;
                 OAuthAccessTokenResult tokenResult = Session["AccessToken"] as OAuthAccessTokenResult;
                 string body = "瑞雪管理系统充值";
                 string timeStamp = TenPayV3Util.GetTimestamp();
@@ -95,7 +98,7 @@ namespace RX.WXMember.Controllers
 
                     // 保存预支付订单信息  
                     string id = Session["readerId"] as string;
-                    OAuthUserInfo userInfo = Session["UserInfo"] as OAuthUserInfo;
+                    //OAuthUserInfo userInfo = Session["UserInfo"] as OAuthUserInfo;
                     if (!string.IsNullOrEmpty(id))
                     {
                         string groundCode = id.Substring(0, 6);
@@ -107,7 +110,7 @@ namespace RX.WXMember.Controllers
                             GroundCode = groundCode,
                             GameCode = gameCode,
                             ReaderCode = readerCode,
-                            Amt = totalfee,
+                            Amt = totalfee/100,
                             BillNo=billNo,
                             //WeiXinCode = userInfo.nickname,
                             //Openid = userInfo.openid,
@@ -149,6 +152,26 @@ namespace RX.WXMember.Controllers
                 //response.EnsureSuccessStatusCode();
                 ////await异步读取最后的JSON（注意此时gzip已经被自动解压缩了，因为上面的AutomaticDecompression = DecompressionMethods.GZip）
                 //Console.WriteLine(await response.Content.ReadAsStringAsync());
+
+                #region 记录日志
+                var msg = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    var logDir = Server.MapPath(string.Format("~/App_Data/DooPost"));
+                    if (!Directory.Exists(logDir))
+                    {
+                        Directory.CreateDirectory(logDir);
+                    }
+                    var logPath = Path.Combine(logDir, string.Format("{0}.txt", DateTime.Now.ToString("yyyyMMdd")));
+                    using (var fileStream = System.IO.File.OpenWrite(logPath))
+                    {
+                        msg = string.Format("{0}  {1}\r\n{2}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString(), msg);
+                        fileStream.Write(Encoding.Default.GetBytes(msg), 0, Encoding.Default.GetByteCount(msg));
+                        fileStream.Close();
+                    }
+                }
+                #endregion
+
             }
         }
 
@@ -185,11 +208,19 @@ namespace RX.WXMember.Controllers
                                 //调用场地接口,向扫描的二维码卡头充值
                                 PayReader item = new PayReader();
                                 item.GroundId = order.GroundCode;
-                                item.ReaderCode = order.ReaderCode;
-                                item.Amt = order.Amt/100;                                
+                                item.ReaderCode = int.Parse(order.ReaderCode).ToString();
+                                item.Amt =(int)order.Amt;                                
                                 string json = JsonConvert.SerializeObject(item);
-                                string url = @"http://m.roccode.cn/api/payReader";
-
+                                string url = string.Empty;
+                                if (item.GroundId=="RX2017")
+                                {
+                                    url = @"http://ymj.roccode.cn/api/payReader";
+                                }
+                                else
+                                {
+                                    url = @"http://m.roccode.cn/api/payReader";
+                                }
+                                
                                 await DooPost(url, json);
                             }
                         }
